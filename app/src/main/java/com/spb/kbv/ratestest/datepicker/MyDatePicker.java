@@ -32,8 +32,7 @@ public class MyDatePicker extends ListView implements AbsListView.OnScrollListen
     private int listItemHeight;
     private int headerOffset;
     private int centralItem;
-
-    private int flagHeaderFooter;
+    private int centralIndex;
 
     public MyDatePicker(Context context) {
         super(context);
@@ -50,20 +49,7 @@ public class MyDatePicker extends ListView implements AbsListView.OnScrollListen
         }
 
         if (scrollState == SCROLL_STATE_IDLE) {
-            //header is visible
-            if (flagHeaderFooter == HEADER_SEEN) {
-                centralItem = (view.getChildCount() - headerOffset);
-            }
-            //footer is visible
-            else if (flagHeaderFooter == FOOTER_SEEN){
-                centralItem = (view.getFirstVisiblePosition() - 1 + headerOffset);
-            }
-            //header and footer not seen
-            else {
-                centralItem = view.getFirstVisiblePosition() + view.getChildCount() / 2;
-            }
-
-            view.smoothScrollToPositionFromTop(centralItem,
+            view.smoothScrollToPositionFromTop(getFirstVisiblePosition() + centralIndex,
                     (getHeight() - listItemHeight) / 2,
                     5);
         }
@@ -85,7 +71,7 @@ public class MyDatePicker extends ListView implements AbsListView.OnScrollListen
         }
 
         if (absListView.getAdapter() != null) {
-
+            int flagHeaderFooter;
             if (firstVisibleItem == 0) {
                 centralItem = visibleItemCount - headerOffset;
                 flagHeaderFooter = HEADER_SEEN;
@@ -93,10 +79,10 @@ public class MyDatePicker extends ListView implements AbsListView.OnScrollListen
                 centralItem = firstVisibleItem - 1 + headerOffset;
                 flagHeaderFooter = FOOTER_SEEN;
             } else {
-                centralItem = (firstVisibleItem + visibleItemCount / 2);
+                centralItem = (firstVisibleItem  + visibleItemCount / 2);
                 flagHeaderFooter = CLEAR;
             }
-
+            centralIndex = centralItem - getFirstVisiblePosition();
             refreshViews(flagHeaderFooter);
         }
     }
@@ -135,10 +121,7 @@ public class MyDatePicker extends ListView implements AbsListView.OnScrollListen
             TextView dateDayText = (TextView) dateView.findViewById(R.id.date_list_item_date);
 
             // if center view
-            if ((flag == HEADER_SEEN & i == (getChildCount() - headerOffset)) ||
-                    (flag == FOOTER_SEEN & i == (headerOffset - 1)) ||
-                    (flag == CLEAR & i == (getChildCount() - 1) / 2)) {
-
+            if (i == centralIndex) {
                 dateMonthText.setVisibility(GONE);
                 dateYearText.setVisibility(VISIBLE);
                 dateDayText.setVisibility(INVISIBLE);
