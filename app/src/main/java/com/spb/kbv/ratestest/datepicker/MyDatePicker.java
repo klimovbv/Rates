@@ -1,27 +1,13 @@
 package com.spb.kbv.ratestest.datepicker;
 
-import android.app.Service;
 import android.content.Context;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AbsListView;
-import android.widget.Adapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.NumberPicker;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.spb.kbv.ratestest.R;
-import com.spb.kbv.ratestest.infrastructure.Utils;
-
-import org.w3c.dom.Text;
-
-import java.util.Calendar;
 
 public class MyDatePicker extends ListView implements AbsListView.OnScrollListener{
     private static final int HEADER_SEEN = 0;
@@ -79,7 +65,7 @@ public class MyDatePicker extends ListView implements AbsListView.OnScrollListen
                 centralItem = firstVisibleItem - 1 + headerOffset;
                 flagHeaderFooter = FOOTER_SEEN;
             } else {
-                centralItem = (firstVisibleItem  + visibleItemCount / 2);
+                centralItem = (firstVisibleItem + visibleItemCount / 2);
                 flagHeaderFooter = CLEAR;
             }
             centralIndex = centralItem - getFirstVisiblePosition();
@@ -90,31 +76,10 @@ public class MyDatePicker extends ListView implements AbsListView.OnScrollListen
     private void refreshViews(int flag) {
         for (int i = 1; i < getChildCount(); i++) {
             View dateView = getChildAt(i);
-            if (flag == HEADER_SEEN) {
-                if (i > getChildCount() - 3) {
-                    dateView.setAlpha(0.3f);
-                } else if (i < 2 && ((headerOffset - getChildCount() / 2 ) < 2))  {
-                    dateView.setAlpha(0.3f);
-                } else {
-                    dateView.setAlpha(1);
-                }
-
-            } else if (flag == FOOTER_SEEN) {
-                if (i < 3) {
-                    dateView.setAlpha(0.3f);
-                } else if (i > getChildCount() - 3 && ((headerOffset - getChildCount() / 2 ) < 2)) {
-                    dateView.setAlpha(0.3f);
-                } else {
-                    dateView.setAlpha(1);
-                }
-
-            } else if (flag == CLEAR) {
-                if (i < 2 || i > getChildCount() - 3) {
-                    dateView.setAlpha(0.3f);
-                } else {
-                    dateView.setAlpha(1);
-                }
-            }
+            if ((i > (centralIndex + headerOffset - 3)) || (i < (centralIndex - headerOffset + 3)))
+                dateView.setAlpha(0.3f);
+            else
+                dateView.setAlpha(1);
 
             TextView dateMonthText = (TextView) dateView.findViewById(R.id.date_list_item_month);
             TextView dateYearText = (TextView) dateView.findViewById(R.id.date_list_item_year);
