@@ -1,38 +1,22 @@
 package com.spb.kbv.ratestest.datepicker;
 
-import android.app.Service;
 import android.content.Context;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AbsListView;
-import android.widget.Adapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.NumberPicker;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.spb.kbv.ratestest.R;
-import com.spb.kbv.ratestest.infrastructure.Utils;
-
-import org.w3c.dom.Text;
-
-import java.util.Calendar;
 
 public class MyDatePicker extends ListView implements AbsListView.OnScrollListener{
-    private static final int HEADER_SEEN = 0;
-    private static final int CLEAR = 1;
-    private static final int FOOTER_SEEN = 2;
 
     private MyHeader header;
     private int listItemHeight;
     private int headerOffset;
     private int centralItem;
     private int centralIndex;
+    private int totalItems;
 
     public MyDatePicker(Context context) {
         super(context);
@@ -71,50 +55,26 @@ public class MyDatePicker extends ListView implements AbsListView.OnScrollListen
         }
 
         if (absListView.getAdapter() != null) {
-            int flagHeaderFooter;
             if (firstVisibleItem == 0) {
                 centralItem = visibleItemCount - headerOffset;
-                flagHeaderFooter = HEADER_SEEN;
             } else if (firstVisibleItem + visibleItemCount == totalItemCount) {
                 centralItem = firstVisibleItem - 1 + headerOffset;
-                flagHeaderFooter = FOOTER_SEEN;
             } else {
-                centralItem = (firstVisibleItem  + visibleItemCount / 2);
-                flagHeaderFooter = CLEAR;
+                centralItem = (firstVisibleItem + visibleItemCount / 2);
             }
             centralIndex = centralItem - getFirstVisiblePosition();
-            refreshViews(flagHeaderFooter);
+            totalItems = totalItemCount;
+            refreshViews();
         }
     }
 
-    private void refreshViews(int flag) {
+    private void refreshViews() {
         for (int i = 1; i < getChildCount(); i++) {
             View dateView = getChildAt(i);
-            if (flag == HEADER_SEEN) {
-                if (i > getChildCount() - 3) {
-                    dateView.setAlpha(0.3f);
-                } else if (i < 2 && ((headerOffset - getChildCount() / 2 ) < 2))  {
-                    dateView.setAlpha(0.3f);
-                } else {
-                    dateView.setAlpha(1);
-                }
-
-            } else if (flag == FOOTER_SEEN) {
-                if (i < 3) {
-                    dateView.setAlpha(0.3f);
-                } else if (i > getChildCount() - 3 && ((headerOffset - getChildCount() / 2 ) < 2)) {
-                    dateView.setAlpha(0.3f);
-                } else {
-                    dateView.setAlpha(1);
-                }
-
-            } else if (flag == CLEAR) {
-                if (i < 2 || i > getChildCount() - 3) {
-                    dateView.setAlpha(0.3f);
-                } else {
-                    dateView.setAlpha(1);
-                }
-            }
+            if ((i > (centralIndex + headerOffset - 3)) || (i < (centralIndex - headerOffset + 3)))
+                dateView.setAlpha(0.3f);
+            else
+                dateView.setAlpha(1);
 
             TextView dateMonthText = (TextView) dateView.findViewById(R.id.date_list_item_month);
             TextView dateYearText = (TextView) dateView.findViewById(R.id.date_list_item_year);
@@ -126,8 +86,8 @@ public class MyDatePicker extends ListView implements AbsListView.OnScrollListen
                 dateYearText.setVisibility(VISIBLE);
                 dateDayText.setVisibility(INVISIBLE);
             }
-            // if not center view
-            else if (flag != FOOTER_SEEN || i != getChildCount() - 1){
+            // if not center view and not footer
+            else if (getLastVisiblePosition() + 1  != totalItems || i != getChildCount() - 1) {
                 dateYearText.setVisibility(INVISIBLE);
                 dateMonthText.setVisibility(VISIBLE);
                 dateDayText.setVisibility(VISIBLE);
