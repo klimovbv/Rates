@@ -1,24 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main_container"
-    tools:context=".MainActivity">
+    android:id="@+id/activity_main_container">
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/activity_main_fragment"
+        android:name="com.spb.kbv.ratestest.fragments.MainFragment"
+        tools:context=".fragments.MainFragment"/>
     <include layout="@layout/include_toolbar"
         android:id="@+id/include_toolbar"/>
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@drawable/picker_frame"
-        android:layout_gravity="center_vertical"/>
-    <Button
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:text="Rate"
-        android:textColor="@color/blue_text_color"
-        android:layout_gravity="bottom|center_horizontal"
-        android:id="@+id/activity_main_button_show_rate"
-        android:background="@drawable/round_button"
-        android:layout_marginBottom="48dp"/>
 </FrameLayout>
